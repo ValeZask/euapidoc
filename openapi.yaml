@@ -1,20 +1,373 @@
 openapi: 3.0.0
 info:
-  title: API школы иностранных языков
-  description: Описание API для админской панели
+  title: API для админ-панели школы
+  description: Документация REST API для администраторов платформы
   version: 1.0.0
 
 paths:
+
+  ### 📘 Преподаватели
   /teachers:
     get:
-      summary: Получить список преподавателей
+      summary: Список преподавателей
+      tags: [Преподаватели]
       responses:
         '200':
           description: Успешный ответ
+    post:
+      summary: Добавить преподавателя
+      tags: [Преподаватели]
+      requestBody:
+        description: Данные нового преподавателя
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Teacher'
+      responses:
+        '201':
+          description: Преподаватель создан
 
+  /teachers/{id}:
+    get:
+      summary: Получить информацию о преподавателе
+      tags: [Преподаватели]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация о преподавателе
+    delete:
+      summary: Удалить преподавателя
+      tags: [Преподаватели]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Успешно удалено
+
+  /teachers/search:
+    get:
+      summary: Поиск преподавателя по имени
+      tags: [Преподаватели]
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Результаты поиска
+
+  /teachers/upload-image:
+    post:
+      summary: Загрузить фото преподавателя
+      tags: [Преподаватели]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Фото загружено
+
+  /teachers/select-subject:
+    post:
+      summary: Выбрать предмет
+      tags: [Преподаватели]
+      responses:
+        '200':
+          description: Предмет выбран
+
+  /teachers/cancel:
+    post:
+      summary: Отмена добавления преподавателя
+      tags: [Преподаватели]
+      responses:
+        '200':
+          description: Отменено
+
+  ### 🎓 Студенты
   /students:
     get:
-      summary: Получить список студентов
+      summary: Список студентов
+      tags: [Студенты]
       responses:
         '200':
           description: Успешный ответ
+    post:
+      summary: Добавить студента
+      tags: [Студенты]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Студент добавлен
+
+  /students/{id}:
+    get:
+      summary: Профиль студента
+      tags: [Студенты]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Детали студента
+    delete:
+      summary: Удалить студента
+      tags: [Студенты]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Успешно удалено
+
+  /students/search:
+    get:
+      summary: Поиск студента по имени
+      tags: [Студенты]
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Найденные студенты
+
+  /students/cancel:
+    post:
+      summary: Отмена добавления студента
+      tags: [Студенты]
+      responses:
+        '200':
+          description: Отменено
+
+  /students/{id}/languages:
+    get:
+      summary: Список изучаемых языков студента
+      tags: [Студенты]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Языки получены
+    post:
+      summary: Добавить язык студенту
+      tags: [Студенты]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                level:
+                  type: string
+      responses:
+        '200':
+          description: Язык добавлен
+
+  /students/{id}/languages/cancel:
+    post:
+      summary: Отмена добавления языка
+      tags: [Студенты]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Отменено
+
+  ### 📚 Курсы
+  /courses:
+    get:
+      summary: Список курсов
+      tags: [Курсы]
+      responses:
+        '200':
+          description: Успешный ответ
+    post:
+      summary: Добавить курс
+      tags: [Курсы]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '201':
+          description: Курс добавлен
+
+  /courses/{id}:
+    delete:
+      summary: Удалить курс
+      tags: [Курсы]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Успешно удалено
+
+  /courses/search:
+    get:
+      summary: Поиск курса по названию
+      tags: [Курсы]
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Результаты поиска
+
+  /courses/cancel:
+    post:
+      summary: Отмена создания курса
+      tags: [Курсы]
+      responses:
+        '200':
+          description: Отменено
+
+  ### 📅 Занятия и расписание
+  /lessons:
+    post:
+      summary: Создать занятие
+      tags: [Занятия]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        '201':
+          description: Занятие создано
+
+  /lessons/{id}:
+    get:
+      summary: Получить занятие
+      tags: [Занятия]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Детали занятия
+    delete:
+      summary: Удалить занятие
+      tags: [Занятия]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Успешно удалено
+
+  /lessons/{id}/zoom-link:
+    get:
+      summary: Получить Zoom-ссылку на занятие
+      tags: [Занятия]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ссылка получена
+
+  /lessons/cancel:
+    post:
+      summary: Отмена создания занятия
+      tags: [Занятия]
+      responses:
+        '200':
+          description: Отменено
+
+  ### 📑 Справочники
+  /languages:
+    get:
+      summary: Список языков
+      tags: [Справочники]
+      responses:
+        '200':
+          description: Успешно
+
+  /levels:
+    get:
+      summary: Список уровней
+      tags: [Справочники]
+      responses:
+        '200':
+          description: Успешно
+
+  /lesson-types:
+    get:
+      summary: Типы занятий (групповой, индивидуальный)
+      tags: [Справочники]
+      responses:
+        '200':
+          description: Успешно
+
+  /subjects:
+    get:
+      summary: Список предметов
+      tags: [
