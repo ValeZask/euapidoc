@@ -1,0 +1,370 @@
+openapi: 3.0.0
+info:
+  title: Teacher API
+  version: 1.0.0
+  description: Эндпоинты для роли преподавателя
+
+paths:
+  /teacher/schedule/today:
+    get:
+      summary: Расписание на сегодня
+      responses:
+        '200':
+          description: OK
+
+  /teacher/lessons:
+    get:
+      summary: Список занятий
+      responses:
+        '200':
+          description: OK
+
+  /teacher/lessons/{id}:
+    get:
+      summary: Детали занятия
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Обновить занятие
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/lessons/{id}/zoom-link:
+    get:
+      summary: Ссылка на Zoom
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/lessons/{id}/files:
+    get:
+      summary: Список файлов занятия
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Загрузить файл
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Created
+
+  /teacher/courses:
+    get:
+      summary: Список курсов
+      responses:
+        '200':
+          description: OK
+
+  /teacher/courses/{id}:
+    get:
+      summary: Детали курса
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Обновить курс
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/courses/{id}/preview:
+    get:
+      summary: Превью курса
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/courses/{id}/students:
+    get:
+      summary: Студенты курса
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/courses/{id}/lessons:
+    get:
+      summary: Занятия курса
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/courses/{id}/media:
+    get:
+      summary: Медиафайлы курса
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/groups:
+    get:
+      summary: Список групп
+      responses:
+        '200':
+          description: OK
+
+  /teacher/groups/{id}/students:
+    get:
+      summary: Студенты группы
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/students:
+    get:
+      summary: Список студентов / поиск
+      parameters:
+        - in: query
+          name: search
+          required: false
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/students/{id}:
+    get:
+      summary: Профиль студента
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/homework:
+    get:
+      summary: Список домашних заданий
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Создать домашнее задание
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '201':
+          description: Created
+
+  /teacher/homework/{id}:
+    get:
+      summary: Детали домашнего задания
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/video-lessons:
+    get:
+      summary: Список видеоуроков
+      responses:
+        '200':
+          description: OK
+
+  /teacher/messages:
+    get:
+      summary: Сообщения
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Отправить сообщение
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '201':
+          description: Created
+
+  /teacher/messages/{id}:
+    get:
+      summary: Просмотр сообщения
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teacher/profile:
+    get:
+      summary: Профиль преподавателя
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Обновить профиль
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+
+  /teachers/{id}/public:
+    get:
+      summary: Публичный профиль преподавателя
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /teachers/{id}/courses:
+    get:
+      summary: Курсы преподавателя (публично)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /courses/{id}/public:
+    get:
+      summary: Публичная информация о курсе
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /courses/{id}/preview:
+    get:
+      summary: Превью курса (публично)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /courses/{id}/files:
+    get:
+      summary: Файлы курса
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /courses/{id}/start-date:
+    get:
+      summary: Дата начала курса
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
