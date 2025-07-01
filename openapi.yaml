@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: API для админ-панели школы
-  description: Документация REST API для администраторов платформы
+  title: API для админ-панели школы иностранных языков
+  description: Документация REST API для администраторов языковой школы
   version: 1.0.0
 
 paths:
@@ -11,22 +11,51 @@ paths:
     get:
       summary: Список преподавателей
       tags: [Преподаватели]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
       responses:
         '200':
-          description: Успешный ответ
+          description: Список преподавателей
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teachers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Teacher'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
     post:
       summary: Добавить преподавателя
       tags: [Преподаватели]
       requestBody:
-        description: Данные нового преподавателя
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Teacher'
+              $ref: '#/components/schemas/CreateTeacher'
       responses:
         '201':
           description: Преподаватель создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
 
   /teachers/{id}:
     get:
@@ -41,6 +70,32 @@ paths:
       responses:
         '200':
           description: Информация о преподавателе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
+    put:
+      summary: Редактировать преподавателя
+      tags: [Преподаватели]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTeacher'
+      responses:
+        '200':
+          description: Преподаватель обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
     delete:
       summary: Удалить преподавателя
       tags: [Преподаватели]
@@ -52,26 +107,39 @@ paths:
             type: string
       responses:
         '204':
-          description: Успешно удалено
+          description: Преподаватель удален
 
   /teachers/search:
     get:
-      summary: Поиск преподавателя по имени
+      summary: Поиск преподавателей
       tags: [Преподаватели]
       parameters:
-        - name: name
+        - name: query
           in: query
           required: true
           schema:
             type: string
+          description: Поиск по имени или языкам
       responses:
         '200':
           description: Результаты поиска
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Teacher'
 
-  /teachers/upload-image:
+  /teachers/{id}/upload-photo:
     post:
       summary: Загрузить фото преподавателя
       tags: [Преподаватели]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -79,37 +147,54 @@ paths:
             schema:
               type: object
               properties:
-                file:
+                photo:
                   type: string
                   format: binary
       responses:
         '200':
           description: Фото загружено
-
-  /teachers/select-subject:
-    post:
-      summary: Выбрать предмет
-      tags: [Преподаватели]
-      responses:
-        '200':
-          description: Предмет выбран
-
-  /teachers/cancel:
-    post:
-      summary: Отмена добавления преподавателя
-      tags: [Преподаватели]
-      responses:
-        '200':
-          description: Отменено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  photoUrl:
+                    type: string
 
   ### 🎓 Студенты
   /students:
     get:
       summary: Список студентов
       tags: [Студенты]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
       responses:
         '200':
-          description: Успешный ответ
+          description: Список студентов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  students:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Student'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
     post:
       summary: Добавить студента
       tags: [Студенты]
@@ -118,10 +203,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Student'
+              $ref: '#/components/schemas/CreateStudent'
       responses:
         '201':
           description: Студент добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
 
   /students/{id}:
     get:
@@ -135,7 +224,33 @@ paths:
             type: string
       responses:
         '200':
-          description: Детали студента
+          description: Профиль студента
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+    put:
+      summary: Редактировать студента
+      tags: [Студенты]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStudent'
+      responses:
+        '200':
+          description: Студент обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
     delete:
       summary: Удалить студента
       tags: [Студенты]
@@ -147,34 +262,75 @@ paths:
             type: string
       responses:
         '204':
-          description: Успешно удалено
+          description: Студент удален
 
   /students/search:
     get:
-      summary: Поиск студента по имени
+      summary: Поиск студентов
       tags: [Студенты]
       parameters:
-        - name: name
+        - name: query
           in: query
           required: true
           schema:
             type: string
+          description: Поиск по имени или языкам
       responses:
         '200':
-          description: Найденные студенты
+          description: Результаты поиска
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
 
-  /students/cancel:
-    post:
-      summary: Отмена добавления студента
-      tags: [Студенты]
-      responses:
-        '200':
-          description: Отменено
-
-  /students/{id}/languages:
+  ### 📚 Курсы
+  /courses:
     get:
-      summary: Список изучаемых языков студента
-      tags: [Студенты]
+      summary: Список курсов
+      tags: [Курсы]
+      parameters:
+        - name: language
+          in: query
+          schema:
+            type: string
+          description: Фильтр по языку
+        - name: level
+          in: query
+          schema:
+            type: string
+          description: Фильтр по уровню
+      responses:
+        '200':
+          description: Список курсов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+    post:
+      summary: Создать курс
+      tags: [Курсы]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCourse'
+      responses:
+        '201':
+          description: Курс создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+
+  /courses/{id}:
+    get:
+      summary: Детали курса
+      tags: [Курсы]
       parameters:
         - name: id
           in: path
@@ -183,10 +339,68 @@ paths:
             type: string
       responses:
         '200':
-          description: Языки получены
+          description: Детали курса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetails'
+    put:
+      summary: Редактировать курс
+      tags: [Курсы]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCourse'
+      responses:
+        '200':
+          description: Курс обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    delete:
+      summary: Удалить курс
+      tags: [Курсы]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Курс удален
+
+  /courses/{id}/students:
+    get:
+      summary: Студенты курса
+      tags: [Курсы]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список студентов курса
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
     post:
-      summary: Добавить язык студенту
-      tags: [Студенты]
+      summary: Добавить студента в курс
+      tags: [Курсы]
       parameters:
         - name: id
           in: path
@@ -200,87 +414,62 @@ paths:
             schema:
               type: object
               properties:
-                language:
-                  type: string
-                level:
+                studentId:
                   type: string
       responses:
         '200':
-          description: Язык добавлен
+          description: Студент добавлен в курс
 
-  /students/{id}/languages/cancel:
-    post:
-      summary: Отмена добавления языка
-      tags: [Студенты]
+  /courses/{id}/students/{studentId}:
+    delete:
+      summary: Удалить студента из курса
+      tags: [Курсы]
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
-      responses:
-        '200':
-          description: Отменено
-
-  ### 📚 Курсы
-  /courses:
-    get:
-      summary: Список курсов
-      tags: [Курсы]
-      responses:
-        '200':
-          description: Успешный ответ
-    post:
-      summary: Добавить курс
-      tags: [Курсы]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Course'
-      responses:
-        '201':
-          description: Курс добавлен
-
-  /courses/{id}:
-    delete:
-      summary: Удалить курс
-      tags: [Курсы]
-      parameters:
-        - name: id
+        - name: studentId
           in: path
           required: true
           schema:
             type: string
       responses:
         '204':
-          description: Успешно удалено
+          description: Студент удален из курса
 
-  /courses/search:
+  ### 📅 Занятия
+  /lessons:
     get:
-      summary: Поиск курса по названию
-      tags: [Курсы]
+      summary: Список занятий
+      tags: [Занятия]
       parameters:
-        - name: name
+        - name: date
           in: query
-          required: true
           schema:
             type: string
+            format: date
+          description: Фильтр по дате
+        - name: teacherId
+          in: query
+          schema:
+            type: string
+          description: Фильтр по преподавателю
+        - name: courseId
+          in: query
+          schema:
+            type: string
+          description: Фильтр по курсу
       responses:
         '200':
-          description: Результаты поиска
-
-  /courses/cancel:
-    post:
-      summary: Отмена создания курса
-      tags: [Курсы]
-      responses:
-        '200':
-          description: Отменено
-
-  ### 📅 Занятия и расписание
-  /lessons:
+          description: Список занятий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lesson'
     post:
       summary: Создать занятие
       tags: [Занятия]
@@ -289,14 +478,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Lesson'
+              $ref: '#/components/schemas/CreateLesson'
       responses:
         '201':
           description: Занятие создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
 
   /lessons/{id}:
     get:
-      summary: Получить занятие
+      summary: Детали занятия
       tags: [Занятия]
       parameters:
         - name: id
@@ -307,6 +500,32 @@ paths:
       responses:
         '200':
           description: Детали занятия
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonDetails'
+    put:
+      summary: Редактировать занятие
+      tags: [Занятия]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLesson'
+      responses:
+        '200':
+          description: Занятие обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
     delete:
       summary: Удалить занятие
       tags: [Занятия]
@@ -318,29 +537,7 @@ paths:
             type: string
       responses:
         '204':
-          description: Успешно удалено
-
-  /lessons/{id}/zoom-link:
-    get:
-      summary: Получить Zoom-ссылку на занятие
-      tags: [Занятия]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Ссылка получена
-
-  /lessons/cancel:
-    post:
-      summary: Отмена создания занятия
-      tags: [Занятия]
-      responses:
-        '200':
-          description: Отменено
+          description: Занятие удалено
 
   ### 📑 Справочники
   /languages:
@@ -349,7 +546,20 @@ paths:
       tags: [Справочники]
       responses:
         '200':
-          description: Успешно
+          description: Список доступных языков
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    code:
+                      type: string
 
   /levels:
     get:
@@ -357,17 +567,374 @@ paths:
       tags: [Справочники]
       responses:
         '200':
-          description: Успешно
+          description: Список уровней владения языком
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
 
   /lesson-types:
     get:
-      summary: Типы занятий (групповой, индивидуальный)
+      summary: Типы занятий
       tags: [Справочники]
       responses:
         '200':
-          description: Успешно
+          description: Типы занятий (групповые, индивидуальные)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    maxStudents:
+                      type: integer
 
-  /subjects:
+  ### 📊 Статистика
+  /dashboard/stats:
     get:
-      summary: Список предметов
-      tags: [
+      summary: Статистика для дашборда
+      tags: [Статистика]
+      responses:
+        '200':
+          description: Основная статистика
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalStudents:
+                    type: integer
+                  totalTeachers:
+                    type: integer
+                  totalCourses:
+                    type: integer
+                  totalLessons:
+                    type: integer
+                  upcomingLessons:
+                    type: integer
+
+components:
+  schemas:
+    Teacher:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        languages:
+          type: array
+          items:
+            type: string
+        photoUrl:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateTeacher:
+      type: object
+      required:
+        - name
+        - email
+        - languages
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        languages:
+          type: array
+          items:
+            type: string
+
+    UpdateTeacher:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        languages:
+          type: array
+          items:
+            type: string
+
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        targetLanguages:
+          type: array
+          items:
+            type: object
+            properties:
+              language:
+                type: string
+              level:
+                type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateStudent:
+      type: object
+      required:
+        - name
+        - email
+        - targetLanguages
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        targetLanguages:
+          type: array
+          items:
+            type: object
+            properties:
+              language:
+                type: string
+              level:
+                type: string
+
+    UpdateStudent:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        targetLanguages:
+          type: array
+          items:
+            type: object
+            properties:
+              language:
+                type: string
+              level:
+                type: string
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        level:
+          type: string
+        teacherId:
+          type: string
+        maxStudents:
+          type: integer
+        currentStudents:
+          type: integer
+        schedule:
+          type: array
+          items:
+            type: object
+            properties:
+              dayOfWeek:
+                type: integer
+              startTime:
+                type: string
+              duration:
+                type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateCourse:
+      type: object
+      required:
+        - name
+        - language
+        - level
+        - teacherId
+        - schedule
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        level:
+          type: string
+        teacherId:
+          type: string
+        maxStudents:
+          type: integer
+          default: 8
+        schedule:
+          type: array
+          items:
+            type: object
+            properties:
+              dayOfWeek:
+                type: integer
+              startTime:
+                type: string
+              duration:
+                type: integer
+
+    UpdateCourse:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        teacherId:
+          type: string
+        maxStudents:
+          type: integer
+        schedule:
+          type: array
+          items:
+            type: object
+            properties:
+              dayOfWeek:
+                type: integer
+              startTime:
+                type: string
+              duration:
+                type: integer
+
+    CourseDetails:
+      allOf:
+        - $ref: '#/components/schemas/Course'
+        - type: object
+          properties:
+            teacher:
+              $ref: '#/components/schemas/Teacher'
+            students:
+              type: array
+              items:
+                $ref: '#/components/schemas/Student'
+
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: string
+        courseId:
+          type: string
+        teacherId:
+          type: string
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+        duration:
+          type: integer
+        type:
+          type: string
+          enum: [group, individual]
+        zoomLink:
+          type: string
+        status:
+          type: string
+          enum: [scheduled, completed, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateLesson:
+      type: object
+      required:
+        - courseId
+        - date
+        - startTime
+        - duration
+        - type
+      properties:
+        courseId:
+          type: string
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+        duration:
+          type: integer
+        type:
+          type: string
+          enum: [group, individual]
+        zoomLink:
+          type: string
+
+    UpdateLesson:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+        duration:
+          type: integer
+        zoomLink:
+          type: string
+        status:
+          type: string
+          enum: [scheduled, completed, cancelled]
+
+    LessonDetails:
+      allOf:
+        - $ref: '#/components/schemas/Lesson'
+        - type: object
+          properties:
+            course:
+              $ref: '#/components/schemas/Course'
+            teacher:
+              $ref: '#/components/schemas/Teacher'
+            students:
+              type: array
+              items:
+                $ref: '#/components/schemas/Student'
