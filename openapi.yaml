@@ -1,0 +1,20 @@
+openapi: 3.0.0
+info:
+  title: API школы иностранных языков
+  description: Описание API для админской панели
+  version: 1.0.0
+
+paths:
+  /teachers:
+    get:
+      summary: Получить список преподавателей
+      responses:
+        '200':
+          description: Успешный ответ
+
+  /students:
+    get:
+      summary: Получить список студентов
+      responses:
+        '200':
+          description: Успешный ответ
