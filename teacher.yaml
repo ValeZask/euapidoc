@@ -30,21 +30,6 @@ paths:
       responses:
         '200':
           description: OK
-    put:
-      summary: Обновить занятие
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { type: object }
-      responses:
-        '200':
-          description: OK
 
   /teacher/lessons/{id}/zoom-link:
     get:
@@ -105,21 +90,6 @@ paths:
           name: id
           required: true
           schema: { type: string }
-      responses:
-        '200':
-          description: OK
-    put:
-      summary: Обновить курс
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { type: object }
       responses:
         '200':
           description: OK
@@ -283,16 +253,6 @@ paths:
   /teacher/profile:
     get:
       summary: Профиль преподавателя
-      responses:
-        '200':
-          description: OK
-    put:
-      summary: Обновить профиль
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { type: object }
       responses:
         '200':
           description: OK
