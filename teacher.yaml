@@ -1,66 +1,121 @@
 openapi: 3.0.0
 info:
-  title: Teacher API
+  title: API преподавателя
   version: 1.0.0
-  description: Эндпоинты для роли преподавателя
+  description: API для работы с функциями преподавателя в образовательной платформе
+
+servers:
+  - url: https://api.education.com/v1
+    description: Основной сервер
+
+tags:
+  - name: Расписание
+    description: Управление расписанием занятий
+  - name: Занятия
+    description: Управление занятиями и их материалами
+  - name: Курсы
+    description: Управление курсами преподавателя
+  - name: Студенты и группы
+    description: Работа со студентами и группами
+  - name: Домашние задания
+    description: Создание и управление домашними заданиями
+  - name: Видеоуроки
+    description: Управление видеоматериалами
+  - name: Сообщения
+    description: Система обмена сообщениями
+  - name: Профиль
+    description: Управление профилем преподавателя
+  - name: Публичные данные
+    description: Открытые данные о преподавателях и курсах
 
 paths:
+  # ===== РАСПИСАНИЕ =====
   /teacher/schedule/today:
     get:
-      summary: Расписание на сегодня
+      tags: [Расписание]
+      summary: Получить расписание на сегодня
+      description: Возвращает все занятия преподавателя на текущий день
       responses:
         '200':
-          description: OK
+          description: Расписание успешно получено
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
 
+  # ===== ЗАНЯТИЯ =====
   /teacher/lessons:
     get:
-      summary: Список занятий
+      tags: [Занятия]
+      summary: Получить список всех занятий
+      description: Возвращает полный список занятий преподавателя
       responses:
         '200':
-          description: OK
+          description: Список занятий успешно получен
 
   /teacher/lessons/{id}:
     get:
-      summary: Детали занятия
+      tags: [Занятия]
+      summary: Получить подробную информацию о занятии
+      description: Возвращает детальную информацию о конкретном занятии
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Уникальный идентификатор занятия
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Информация о занятии успешно получена
+        '404':
+          description: Занятие не найдено
 
   /teacher/lessons/{id}/zoom-link:
     get:
-      summary: Ссылка на Zoom
+      tags: [Занятия]
+      summary: Получить ссылку на Zoom конференцию
+      description: Возвращает активную ссылку для проведения онлайн занятия
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор занятия
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Ссылка на Zoom успешно получена
 
   /teacher/lessons/{id}/files:
     get:
-      summary: Список файлов занятия
+      tags: [Занятия]
+      summary: Получить список файлов занятия
+      description: Возвращает все материалы, прикрепленные к занятию
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор занятия
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Список файлов успешно получен
+    
     post:
-      summary: Загрузить файл
+      tags: [Занятия]
+      summary: Загрузить новый файл к занятию
+      description: Позволяет прикрепить материалы к занятию
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор занятия
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -71,260 +126,382 @@ paths:
                 file:
                   type: string
                   format: binary
+                  description: Файл для загрузки
+              required:
+                - file
       responses:
         '201':
-          description: Created
+          description: Файл успешно загружен
 
+  # ===== КУРСЫ =====
   /teacher/courses:
     get:
-      summary: Список курсов
+      tags: [Курсы]
+      summary: Получить список курсов преподавателя
+      description: Возвращает все курсы, которые ведет преподаватель
       responses:
         '200':
-          description: OK
+          description: Список курсов успешно получен
 
   /teacher/courses/{id}:
     get:
-      summary: Детали курса
+      tags: [Курсы]
+      summary: Получить подробную информацию о курсе
+      description: Возвращает детальную информацию о конкретном курсе
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Информация о курсе успешно получена
 
   /teacher/courses/{id}/preview:
     get:
-      summary: Превью курса
+      tags: [Курсы]
+      summary: Получить превью курса
+      description: Возвращает краткую информацию о курсе для предварительного просмотра
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Превью курса успешно получено
 
   /teacher/courses/{id}/students:
     get:
-      summary: Студенты курса
+      tags: [Курсы]
+      summary: Получить список студентов курса
+      description: Возвращает всех студентов, записанных на курс
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Список студентов успешно получен
 
   /teacher/courses/{id}/lessons:
     get:
-      summary: Занятия курса
+      tags: [Курсы]
+      summary: Получить занятия курса
+      description: Возвращает все занятия, входящие в курс
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Список занятий курса успешно получен
 
   /teacher/courses/{id}/media:
     get:
-      summary: Медиафайлы курса
+      tags: [Курсы]
+      summary: Получить медиафайлы курса
+      description: Возвращает все медиаматериалы курса (видео, аудио, изображения)
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Медиафайлы успешно получены
 
+  # ===== СТУДЕНТЫ И ГРУППЫ =====
   /teacher/groups:
     get:
-      summary: Список групп
+      tags: [Студенты и группы]
+      summary: Получить список групп
+      description: Возвращает все группы преподавателя
       responses:
         '200':
-          description: OK
+          description: Список групп успешно получен
 
   /teacher/groups/{id}/students:
     get:
-      summary: Студенты группы
+      tags: [Студенты и группы]
+      summary: Получить студентов группы
+      description: Возвращает всех студентов в конкретной группе
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор группы
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Список студентов группы успешно получен
 
   /teacher/students:
     get:
-      summary: Список студентов / поиск
+      tags: [Студенты и группы]
+      summary: Поиск студентов
+      description: Возвращает список студентов с возможностью поиска по имени
       parameters:
-        - in: query
-          name: search
+        - name: search
+          in: query
           required: false
-          schema: { type: string }
+          description: Строка для поиска студентов по имени или фамилии
+          schema:
+            type: string
+            example: "Иван Петров"
       responses:
         '200':
-          description: OK
+          description: Результаты поиска успешно получены
 
   /teacher/students/{id}:
     get:
-      summary: Профиль студента
+      tags: [Студенты и группы]
+      summary: Получить профиль студента
+      description: Возвращает подробную информацию о конкретном студенте
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор студента
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Профиль студента успешно получен
 
+  # ===== ДОМАШНИЕ ЗАДАНИЯ =====
   /teacher/homework:
     get:
-      summary: Список домашних заданий
+      tags: [Домашние задания]
+      summary: Получить список домашних заданий
+      description: Возвращает все домашние задания преподавателя
       responses:
         '200':
-          description: OK
+          description: Список домашних заданий успешно получен
+    
     post:
-      summary: Создать домашнее задание
+      tags: [Домашние задания]
+      summary: Создать новое домашнее задание
+      description: Позволяет создать домашнее задание для студентов
       requestBody:
         required: true
         content:
           application/json:
-            schema: { type: object }
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Название задания
+                description:
+                  type: string
+                  description: Описание задания
+                dueDate:
+                  type: string
+                  format: date-time
+                  description: Срок выполнения
+              required:
+                - title
+                - description
       responses:
         '201':
-          description: Created
+          description: Домашнее задание успешно создано
 
   /teacher/homework/{id}:
     get:
-      summary: Детали домашнего задания
+      tags: [Домашние задания]
+      summary: Получить детали домашнего задания
+      description: Возвращает подробную информацию о конкретном домашнем задании
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор домашнего задания
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Детали домашнего задания успешно получены
 
+  # ===== ВИДЕОУРОКИ =====
   /teacher/video-lessons:
     get:
-      summary: Список видеоуроков
+      tags: [Видеоуроки]
+      summary: Получить список видеоуроков
+      description: Возвращает все видеоуроки преподавателя
       responses:
         '200':
-          description: OK
+          description: Список видеоуроков успешно получен
 
+  # ===== СООБЩЕНИЯ =====
   /teacher/messages:
     get:
-      summary: Сообщения
+      tags: [Сообщения]
+      summary: Получить входящие сообщения
+      description: Возвращает все сообщения преподавателя
       responses:
         '200':
-          description: OK
+          description: Сообщения успешно получены
+    
     post:
+      tags: [Сообщения]
       summary: Отправить сообщение
+      description: Позволяет отправить сообщение студенту или группе
       requestBody:
         required: true
         content:
           application/json:
-            schema: { type: object }
+            schema:
+              type: object
+              properties:
+                recipientId:
+                  type: string
+                  description: ID получателя
+                subject:
+                  type: string
+                  description: Тема сообщения
+                content:
+                  type: string
+                  description: Текст сообщения
+              required:
+                - recipientId
+                - content
       responses:
         '201':
-          description: Created
+          description: Сообщение успешно отправлено
 
   /teacher/messages/{id}:
     get:
-      summary: Просмотр сообщения
+      tags: [Сообщения]
+      summary: Просмотреть конкретное сообщение
+      description: Возвращает содержимое выбранного сообщения
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор сообщения
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Сообщение успешно получено
 
+  # ===== ПРОФИЛЬ =====
   /teacher/profile:
     get:
-      summary: Профиль преподавателя
+      tags: [Профиль]
+      summary: Получить профиль преподавателя
+      description: Возвращает информацию о профиле текущего преподавателя
       responses:
         '200':
-          description: OK
+          description: Профиль успешно получен
 
+  # ===== ПУБЛИЧНЫЕ ДАННЫЕ =====
   /teachers/{id}/public:
     get:
-      summary: Публичный профиль преподавателя
+      tags: [Публичные данные]
+      summary: Получить публичный профиль преподавателя
+      description: Возвращает открытую информацию о преподавателе для просмотра студентами
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор преподавателя
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Публичный профиль успешно получен
 
   /teachers/{id}/courses:
     get:
-      summary: Курсы преподавателя (публично)
+      tags: [Публичные данные]
+      summary: Получить курсы преподавателя (публично)
+      description: Возвращает список доступных курсов преподавателя для записи
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор преподавателя
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Список курсов успешно получен
 
   /courses/{id}/public:
     get:
-      summary: Публичная информация о курсе
+      tags: [Публичные данные]
+      summary: Получить публичную информацию о курсе
+      description: Возвращает открытую информацию о курсе для потенциальных студентов
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Публичная информация о курсе успешно получена
 
   /courses/{id}/preview:
     get:
-      summary: Превью курса (публично)
+      tags: [Публичные данные]
+      summary: Получить превью курса (публично)
+      description: Возвращает краткий обзор курса для ознакомления
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Превью курса успешно получено
 
   /courses/{id}/files:
     get:
-      summary: Файлы курса
+      tags: [Публичные данные]
+      summary: Получить доступные файлы курса
+      description: Возвращает список файлов курса, доступных для скачивания
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Список файлов успешно получен
 
   /courses/{id}/start-date:
     get:
-      summary: Дата начала курса
+      tags: [Публичные данные]
+      summary: Получить дату начала курса
+      description: Возвращает информацию о дате начала курса
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
-          schema: { type: string }
+          description: Идентификатор курса
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Дата начала курса успешно получена
