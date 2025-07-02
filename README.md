@@ -30,7 +30,7 @@
 ### 🔗 Просмотр документации
 
 <details>
-<summary><strong>🌐 ReDoc (рекомендуется)</strong></summary>
+<summary><strong>🌐 ReDoc </strong></summary>
 
 ```
 https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/ValeZask/euapidoc/refs/heads/main/openapi.yaml
@@ -80,7 +80,7 @@ https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/ValeZask/
 ### 🔗 Просмотр документации
 
 <details>
-<summary><strong>🌐 ReDoc (рекомендуется)</strong></summary>
+<summary><strong>🌐 ReDoc </strong></summary>
 
 ```
 https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/ValeZask/euapidoc/refs/heads/main/teacher.yaml
